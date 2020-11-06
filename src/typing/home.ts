@@ -4,7 +4,7 @@ export interface ISliders {
     url:string
 }
 
-export interface ILessions {
+export interface ILessons {
     hsaMore:boolean,
     loading:boolean,
     offset:number,
@@ -13,13 +13,14 @@ export interface ILessions {
 }
 
 export interface iList {
-    title:string
+    title:string,
+    price:number
 }
 
 export interface IHomeState {
     currentCategory: CATOGORY_TYPES,
     sliders:ISliders[],
-    lessions:ILessions,
+    lessons:ILessons,
     
 }
 

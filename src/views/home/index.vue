@@ -17,7 +17,7 @@
       </Suspense>
       
       <!-- 列表 -->
-      <HomeList></HomeList>
+      <HomeList :lessonList='lessonList'></HomeList>
   </div>
 </template>
 
@@ -25,7 +25,7 @@
 import HomeHeader from './components/home-header.vue'
 import HomeSwiper from './components/home-swiper.vue'
 import HomeList from './components/home-list.vue'
-import {computed, defineComponent, onMounted} from 'vue' //提示功能
+import {computed, defineComponent, onMounted, onUnmounted} from 'vue' //提示功能
 import { createStore, Store, useStore } from 'vuex'
 import store, { IGlobalState } from '@/store'
 import { CATOGORY_TYPES,ISliders } from '@/typing/home'
@@ -36,12 +36,23 @@ import { getSlider } from '@/api/home'
 function useCategory(store:Store<IGlobalState>) { // 使用store中的数据 分类
     let category =  computed(()=>store.state.home.currentCategory)
     function setCurrentCategory(category:CATOGORY_TYPES) { //传过来最新的数据
-        store.commit(`home/${Types.SET_CATEGORY}`,category) //commot修改store的数据
+        store.commit(`home/${Types.SET_CATEGORY}`,category) //commit修改store的数据
     }
     return {
         category,
         setCurrentCategory
     }
+}
+
+// 列表数据
+function useLessonList (store:Store<IGlobalState>) {
+    let lessonList = computed(()=>store.state.home.lessons.list)
+    onMounted(()=>{ //初始化加载。如过vuex里面有数据，只取一次
+        if(lessonList.value.length == 0) {
+            store.dispatch(`home/${Types.SET_LESSON_LIST}`)
+        }
+    })
+    return  lessonList 
 }
 
 export default defineComponent({
@@ -58,15 +69,18 @@ export default defineComponent({
         //     })
         // })
         let store = useStore<IGlobalState>()
-        let{category,setCurrentCategory} = useCategory(store)
-        let limit = computed(()=>{
-            return store.state.home.lessions.limit
-        })
+        let {category,setCurrentCategory} = useCategory(store)
+        // let limit = computed(()=>{
+        //     return store.state.home.lessons.limit
+        // })
+        let  lessonList  = useLessonList(store)
+        
         // 1.现获取vuex中的数据
         return {
-            limit,
+            // limit,
             category,
             setCurrentCategory,
+            lessonList
         }
         
     },
