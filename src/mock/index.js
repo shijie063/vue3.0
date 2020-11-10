@@ -7,7 +7,7 @@ const swiperList = function() {
     let list = [];
     for (let i = 0; i < 5; i++) {
         let newArticleObject = {
-            title: Random.csentence(1, 5), //  Random.csentence( min, max )
+            title: Random.csentence(4, 6), //  Random.csentence( min, max )
             url: Random.dataImage('300x250', 'mock的图片'), // Random.dataImage( size, text ) 生成一段随机的 Base64 图片编码
         }
         list.push(newArticleObject)
@@ -49,7 +49,8 @@ Mock.mock(RegExp('/lesson/list' + '.*'), 'get', options => {
     for (let i = 0; i < limit; i++) {
         let newArticleObject = {
             title: Random.csentence(1, 5),     
-        price:  '@increment(1)'
+            price: Random.integer(60, 100),
+            poster: Random.dataImage('25x25','')
         }
         mockMsg.list.push(newArticleObject);
       

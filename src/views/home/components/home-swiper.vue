@@ -1,9 +1,9 @@
 
 <template>
-  <div class="home-list">
+  <div class="home-swiper">
       <van-swipe>
             <van-swipe-item v-for="item in sliderList" :key="item.url">
-                <p>{{item.title}}</p>
+                <!-- <p>{{item.title}}</p> -->
                 <img class="swiper_img" :src="item.url"/>
             </van-swipe-item>
         </van-swipe>
@@ -30,13 +30,13 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-    .home-list {
-        padding: 0 10px;
+    .home-swiper {
+        padding: 10px 10px;
         .swiper_img {
             width: 100%;
         }
         .van-swipe-item {
-            height: 250px;
+            height: 200px;
         }
     }
 </style>

@@ -58,6 +58,8 @@ const home:Module<IHomeState,IGlobalState> = { //Moudle vue3自带的
 
 
             let lessons = await getLessons<ILessons>(state.currentCategory,state.lessons.offset,state.lessons.limit) //请求列表的方法
+            console.log(lessons);
+            
             commit(Types.SET_LESSON_LIST,lessons)
             commit(Types.SET_LOADING,false)
         }

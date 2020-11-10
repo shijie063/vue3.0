@@ -7,17 +7,20 @@
        ></HomeHeader>
        {{category}}
       <!-- 轮播图 -->
-      <Suspense>
-          <template #default>
-              <HomeSwiper></HomeSwiper>
-          </template>
-          <template #fallback>
-              <div>loading ...</div>
-          </template>
-      </Suspense>
       
-      <!-- 列表 -->
-      <HomeList :lessonList='lessonList'></HomeList>
+      <div class="home-container" ref="refreshElm">
+          <Suspense>
+            <template #default>
+                <HomeSwiper></HomeSwiper>
+            </template>
+            <template #fallback>
+                <div>loading ...</div>
+            </template>
+        </Suspense>
+        <!-- 列表 -->
+        <HomeList :category='category' :lessonList='lessonList'></HomeList>
+      </div>
+      
   </div>
 </template>
 
@@ -25,12 +28,13 @@
 import HomeHeader from './components/home-header.vue'
 import HomeSwiper from './components/home-swiper.vue'
 import HomeList from './components/home-list.vue'
-import {computed, defineComponent, onMounted, onUnmounted} from 'vue' //提示功能
+import {computed, defineComponent, onMounted, onUnmounted, ref} from 'vue' //提示功能
 import { createStore, Store, useStore } from 'vuex'
 import store, { IGlobalState } from '@/store'
 import { CATOGORY_TYPES,ISliders } from '@/typing/home'
 import * as Types from '@/store/action_types'
 import { getSlider } from '@/api/home'
+import {useLoadMore} from '@/hooks/useLoadMore'
 
 //功能函数，修改分类使用
 function useCategory(store:Store<IGlobalState>) { // 使用store中的数据 分类
@@ -40,7 +44,7 @@ function useCategory(store:Store<IGlobalState>) { // 使用store中的数据 分
     }
     return {
         category,
-        setCurrentCategory
+        setCurrentCategory,
     }
 }
 
@@ -74,13 +78,15 @@ export default defineComponent({
         //     return store.state.home.lessons.limit
         // })
         let  lessonList  = useLessonList(store)
-        
+        const refreshElm = ref<null | HTMLElement>(null)
+        const {isLoading,isMore} = useLoadMore(refreshElm,store,`home/${Types.SET_LESSON_LIST}`)
         // 1.现获取vuex中的数据
         return {
             // limit,
             category,
             setCurrentCategory,
-            lessonList
+            lessonList,
+            refreshElm
         }
         
     },
@@ -88,3 +94,9 @@ export default defineComponent({
 
 })
 </script>
+
+<style lang="scss">
+.home-container {
+    padding-bottom: 60px;
+}
+</style>
