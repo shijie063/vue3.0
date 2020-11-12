@@ -5,8 +5,7 @@ export interface ISliders {
 }
 
 export interface ILessons {
-    hsaMore:boolean,
-    loading:boolean,
+    hasMore:boolean,
     offset:number,
     limit:number,
     list:iList[]

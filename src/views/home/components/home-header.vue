@@ -17,7 +17,7 @@ export default defineComponent({
     },
     emits:['setCurrentCategory'], //为了有提示，可以不写
     setup(props,context) { //接受参数和上下文
-        let state = reactive({
+        let state = reactive({  //响应式
             options: [
                 { text: '全部商品', value: CATOGORY_TYPES.ALL },
                 { text: '新款商品', value: CATOGORY_TYPES.REACT},
@@ -27,11 +27,9 @@ export default defineComponent({
         })
         function change(value:CATOGORY_TYPES){
             context.emit('setCurrentCategory',value)
-            console.log(value);
-            
         }
         return {
-            ...toRefs(state),
+            ...toRefs(state), //解构响应式对象
             change
         }
         // context.emit('setCurrentCategory') //触发传进来的方法

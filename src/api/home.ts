@@ -9,7 +9,6 @@ export function getLessons<T>(category:CATOGORY_TYPES,offset:number = 0,limit:nu
     return axios.get<T,T>(`/lesson/list?category=${category}&offset=${offset}&limit=${limit}`)
 }
 
-
 // getSlider<ISliders>().then(res=>{ //泛型，标志这接口返回的类型
 //     console.log(res);
     

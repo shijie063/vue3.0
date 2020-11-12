@@ -8,7 +8,7 @@ const swiperList = function() {
     for (let i = 0; i < 5; i++) {
         let newArticleObject = {
             title: Random.csentence(4, 6), //  Random.csentence( min, max )
-            url: Random.dataImage('300x250', 'mock的图片'), // Random.dataImage( size, text ) 生成一段随机的 Base64 图片编码
+            url: Random.dataImage('300x250', ''), // Random.dataImage( size, text ) 生成一段随机的 Base64 图片编码
         }
         list.push(newArticleObject)
     }
@@ -37,29 +37,53 @@ const swiperList = function() {
         }
     }
 }
-
 Mock.mock(RegExp('/lesson/list' + '.*'), 'get', options => {
-    console.log(options);
     // 获取请求url内的数组长度参数
-    let limit = parseInt(getUrlParam(options.url, 'limit'));  
-    let mockMsg = {
-        list: []
-    };
-    // 根据请求参数设定数组长度
-    for (let i = 0; i < limit; i++) {
-        let newArticleObject = {
-            title: Random.csentence(1, 5),     
-            price: Random.integer(60, 100),
-            poster: Random.dataImage('25x25','')
+    let limit = parseInt(getUrlParam(options.url, 'limit'));
+    let category = parseInt(getUrlParam(options.url, 'category'));
+    let offset = parseInt(getUrlParam(options.url, 'offset'));
+    let random = Math.floor(Math.random()*11)+10
+    if(offset <= random){
+        let mockMsg = {
+            hasMore:true,
+            list: []
+        };
+        // 根据请求参数设定数组长度
+        for (let i = 0; i < limit; i++) {
+            let newArticleObject = {
+                title: category + Random.csentence(3, 5),     
+                price: Random.integer(60, 100),
+                poster: Random.dataImage('25x25','')
+            }
+            mockMsg.list.push(newArticleObject);
         }
-        mockMsg.list.push(newArticleObject);
-      
+        return {
+            code: 0,
+            msg: "success",
+            data: mockMsg
+        }
+    }else {
+        let mockMsg = {
+            hasMore:false,
+            list: []
+        };
+        // 根据请求参数设定数组长度
+        let limit = Math.floor(Math.random() * 3) + 1
+        for (let i = 0; i < limit; i++) {
+            let newArticleObject = {
+                title: category + Random.csentence(3, 5),     
+                price: Random.integer(60, 100),
+                poster: Random.dataImage('25x25','')
+            }
+            mockMsg.list.push(newArticleObject);
+        }
+        return {
+            code: 0,
+            msg: "success",
+            data: mockMsg
+        }
     }
-    return {
-        code: 0,
-        msg: "success",
-        data: mockMsg
-    }
+    
   });
 // Mock.mock( url, post/get , 返回的数据)；
 

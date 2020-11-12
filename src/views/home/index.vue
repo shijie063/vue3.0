@@ -5,7 +5,6 @@
         :category='category'
         @setCurrentCategory='setCurrentCategory'
        ></HomeHeader>
-       {{category}}
       <!-- 轮播图 -->
       
       <div class="home-container" ref="refreshElm">
@@ -19,6 +18,8 @@
         </Suspense>
         <!-- 列表 -->
         <HomeList :category='category' :lessonList='lessonList'></HomeList>
+        <div v-if="hasMore" class="loading">loading...</div>
+        <div v-else class="hasMore">- 我是有底线的 -</div>
       </div>
       
   </div>
@@ -41,10 +42,17 @@ function useCategory(store:Store<IGlobalState>) { // 使用store中的数据 分
     let category =  computed(()=>store.state.home.currentCategory)
     function setCurrentCategory(category:CATOGORY_TYPES) { //传过来最新的数据
         store.commit(`home/${Types.SET_CATEGORY}`,category) //commit修改store的数据
+        store.state.home.lessons = {
+            hasMore:true, //是否有更多
+            limit:5,
+            list:[], //当前显示在页面的数据
+            offset: 0
+        }
+        store.dispatch(`home/${Types.SET_LESSON_LIST}`) // 列表更新方法
     }
     return {
         category,
-        setCurrentCategory,
+        setCurrentCategory
     }
 }
 
@@ -69,24 +77,20 @@ export default defineComponent({
         // onMounted(()=>{
         //    getSlider<ISliders>().then(res=>{ //泛型，标志这接口返回的类型
         //         console.log(res);
-        //         const swiperList = res
         //     })
         // })
+        // 1.先获取vuex中的数据
         let store = useStore<IGlobalState>()
         let {category,setCurrentCategory} = useCategory(store)
-        // let limit = computed(()=>{
-        //     return store.state.home.lessons.limit
-        // })
         let  lessonList  = useLessonList(store)
         const refreshElm = ref<null | HTMLElement>(null)
-        const {isLoading,isMore} = useLoadMore(refreshElm,store,`home/${Types.SET_LESSON_LIST}`)
-        // 1.现获取vuex中的数据
+        const hasMore = useLoadMore(refreshElm,store,`home/${Types.SET_LESSON_LIST}`)
         return {
-            // limit,
             category,
             setCurrentCategory,
             lessonList,
-            refreshElm
+            refreshElm,
+            hasMore
         }
         
     },
@@ -97,6 +101,17 @@ export default defineComponent({
 
 <style lang="scss">
 .home-container {
-    padding-bottom: 60px;
+    position: absolute;
+    top:65px;
+    bottom: 50px;
+    width: 100%;
+    overflow-y: scroll;
+    .loading,.hasMore {
+        font-size: 14px;
+        color: #ccc;
+        width: 100%;
+        margin: 16px 0;
+        text-align: center;
+    }
 }
 </style>
